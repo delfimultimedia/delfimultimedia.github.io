@@ -3,10 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ProfecIA</title>
+  <title>Cartas de Predicción</title>
   <style>
- 
- 
 body {
   background-color: #0e0c24;
   margin: 0;
@@ -18,7 +16,7 @@ body {
   justify-content: center;
   align-items: center;
   position: relative;
-  perspective: 1200px; /* Profundidad para efecto 3D */
+  perspective: 1200px;
 }
 
 canvas {
@@ -38,43 +36,37 @@ canvas {
   cursor: pointer;
   z-index: 1;
   position: relative;
-
   transform-style: preserve-3d;
-  transform-origin: bottom center; /* ✅ Punto de giro: base de la carta */
+  transform-origin: bottom center;
   transition: transform 0.4s ease;
-
-
-
 }
 
 #card:hover {
-  transform: rotateX(10deg) translateY(70px); /* ✅ Inclinación hacia adelante */
+  transform: rotateX(10deg) translateY(70px);
 }
 
 .card-clicked {
-  transform: rotateX(20deg) translateY(20px); /* ✅ Coincide con hover, podés ajustar */
+  transform: rotateX(20deg) translateY(20px);
 }
 
-    #prediction {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 480px;
-      transform: translate(-50%, -50%);
-      color: white;
-      font-size: 34px;
-      padding: 10px;
-      text-shadow: 1px 1px 20px rgba(130, 230, 255, 0.7);
-      border-radius: 10px;
-      display: none;
-      text-align: center;
-    }
-
-
+#prediction {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 480px;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 34px;
+  padding: 10px;
+  text-shadow: 1px 1px 20px rgba(130, 230, 255, 0.7);
+  border-radius: 10px;
+  display: none;
+  text-align: center;
+}
 
 .magic-glow {
   position: absolute;
-   border-radius: 15px;
+  border-radius: 15px;
   top: 0;
   left: 0;
   width: 100%;
@@ -84,19 +76,13 @@ canvas {
   z-index: 2;
 }
 
-
 .magic-glow::before,
 .magic-glow::after {
   content: '';
   position: absolute;
   width: 200%;
   height: 200%;
-  background: linear-gradient(250deg, 
-    #0225363b, 
-    #083c7034, 
-    #4a08a081, 
-    #5c038536, 
-    #05557c2c);
+  background: linear-gradient(250deg, #0225363b, #083c7034, #4a08a081, #5c038536, #05557c2c);
   background-size: 1000% 1000%;
   animation: gradient-shift 15s ease infinite;
   transform: translate(-50%, -50%);
@@ -113,15 +99,9 @@ canvas {
 }
 
 @keyframes gradient-shift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 .sparkle {
@@ -145,52 +125,48 @@ canvas {
     opacity: 0;
   }
 }
-
-
-
-
   </style>
 </head>
 <body>
 <audio id="flip-sound" src="flip-1.MP3" preload="auto"></audio>
 
-  <canvas id="stars"></canvas>
+<canvas id="stars"></canvas>
 
 <div id="card">
   <div id="prediction"></div>
-  <div class="magic-glow"></div>  <!-- <- moved inside #card -->
+  <div class="magic-glow"></div>
 </div>
 
-  <script>
-    // Predicción
-    const card = document.getElementById('card');
-    const predictionText = document.getElementById('prediction');
-    const reversoImg = "reverso.png";
-    const prediccionImg = "prediccion.png";
-    const predicciones = [
-      "Una oportunidad inesperada tocará tu puerta.",
-      "Confía en tu intuición, hoy más que nunca.",
-      "Un viejo amigo traerá noticias.",
-      "La respuesta que buscas está en tu interior.",
-      "Cambios positivos vienen en camino.",
-      "Evita decisiones impulsivas hoy.",
-      "Un viaje revelador está por llegar.",
-      "Escucha con atención: alguien tiene algo importante que decirte.",
-      "Tu creatividad te abrirá nuevas puertas.",
-      "La paciencia será recompensada.",
-      "Una verdad saldrá a la luz.",
-      "Nuevos comienzos traerán alivio.",
-      "No temas dejar ir lo que ya no te sirve.",
-      "La fortuna te sonríe si das el primer paso.",
-      "Descubrirás una habilidad escondida."
-    ];
-    let mostrandoPrediccion = false;
-    card.style.backgroundImage = `url('${reversoImg}')`;
+<script>
+const card = document.getElementById('card');
+const predictionText = document.getElementById('prediction');
+const reversoImg = "reverso.png";
+const prediccionImg = "prediccion.png";
+const flipSound = document.getElementById("flip-sound");
 
-    const flipSound = document.getElementById("flip-sound");
+const predicciones = [
+  "Una oportunidad inesperada tocará tu puerta.",
+  "Confía en tu intuición, hoy más que nunca.",
+  "Un viejo amigo traerá noticias.",
+  "La respuesta que buscas está en tu interior.",
+  "Cambios positivos vienen en camino.",
+  "Evita decisiones impulsivas hoy.",
+  "Un viaje revelador está por llegar.",
+  "Escucha con atención: alguien tiene algo importante que decirte.",
+  "Tu creatividad te abrirá nuevas puertas.",
+  "La paciencia será recompensada.",
+  "Una verdad saldrá a la luz.",
+  "Nuevos comienzos traerán alivio.",
+  "No temas dejar ir lo que ya no te sirve.",
+  "La fortuna te sonríe si das el primer paso.",
+  "Descubrirás una habilidad escondida."
+];
 
-    card.addEventListener("click", () => {
-    if (mostrandoPrediccion) {
+let mostrandoPrediccion = false;
+card.style.backgroundImage = `url('${reversoImg}')`;
+
+function toggleCard() {
+  if (mostrandoPrediccion) {
     card.style.backgroundImage = `url('${reversoImg}')`;
     predictionText.style.display = "none";
     mostrandoPrediccion = false;
@@ -202,61 +178,74 @@ canvas {
     mostrandoPrediccion = true;
   }
 
-card.classList.add("card-clicked");
-  flipSound.currentTime = 0; // reinicia el sonido por si hacés click varias veces
+  card.classList.add("card-clicked");
+  flipSound.currentTime = 0;
   flipSound.play();
 
+  // Quitar la clase después de la animación
   setTimeout(() => {
     card.classList.remove("card-clicked");
-  }, 300); // dura 0.3s igual que la transición
+  }, 300);
+}
 
+// CLICK PARA ESCRITORIO
+card.addEventListener("click", toggleCard);
 
+// TOQUE PARA MÓVIL
+card.addEventListener("touchstart", e => {
+  e.preventDefault(); // Evita que se dispare también el click
+  toggleCard();
+}, { passive: false });
 
+card.addEventListener("touchend", () => {
+  // Quitar cualquier animación persistente luego de tocar
+  setTimeout(() => {
+    card.classList.remove("card-clicked");
+  }, 400); // coincide con la duración de la transición
+});
 
+// Estrellas
+const canvas = document.getElementById('stars');
+const ctx = canvas.getContext('2d');
+let stars = [];
+
+function initStars() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  stars = [];
+  for (let i = 0; i < 100; i++) {
+    stars.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.5 + 0.3,
+      dx: (Math.random() - 0.5) * 0.2,
+      dy: (Math.random() - 0.5) * 0.2
     });
+  }
+}
 
-    // Estrellas
-    const canvas = document.getElementById('stars');
-    const ctx = canvas.getContext('2d');
-    let stars = [];
+function animateStars() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = 'white';
+  for (let star of stars) {
+    ctx.beginPath();
+    ctx.arc(star.x, star.y, star.r, 0, 2 * Math.PI);
+    ctx.fill();
+    star.x += star.dx;
+    star.y += star.dy;
 
-    function initStars() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      stars = [];
-      for (let i = 0; i < 100; i++) {
-        stars.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          r: Math.random() * 1.5 + 0.3,
-          dx: (Math.random() - 0.5) * 0.2,
-          dy: (Math.random() - 0.5) * 0.2
-        });
-      }
-    }
+    if (star.x < 0 || star.x > canvas.width) star.dx *= -1;
+    if (star.y < 0 || star.y > canvas.height) star.dy *= -1;
+  }
+  requestAnimationFrame(animateStars);
+}
 
-    function animateStars() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = 'white';
-      for (let star of stars) {
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.r, 0, 2 * Math.PI);
-        ctx.fill();
-        star.x += star.dx;
-        star.y += star.dy;
+window.addEventListener('resize', initStars);
 
-        if (star.x < 0 || star.x > canvas.width) star.dx *= -1;
-        if (star.y < 0 || star.y > canvas.height) star.dy *= -1;
-      }
-      requestAnimationFrame(animateStars);
-    }
+initStars();
+animateStars();
 
-    window.addEventListener('resize', initStars);
-
-    initStars();
-    animateStars();
-
-// Magia flotante sobre la carta
+// Magia flotante
 const glowContainer = document.querySelector('.magic-glow');
 
 function createSparkle() {
@@ -270,11 +259,7 @@ function createSparkle() {
 }
 
 setInterval(createSparkle, 300);
-
-
-
-
-  </script>
+</script>
 
 </body>
 </html>
