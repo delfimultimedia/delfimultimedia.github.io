@@ -19,7 +19,8 @@ body {
   perspective: 1200px;
 }
 
-canvas {
+/* fondo de estrellas original */
+canvas#stars {
   position: fixed;
   top: 0;
   left: 0;
@@ -34,19 +35,18 @@ canvas {
   background-position: center;
   box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
   cursor: pointer;
-  z-index: 1;
   position: relative;
+  z-index: 1;
   transform-style: preserve-3d;
   transform-origin: bottom center;
   transition: transform 0.4s ease;
 }
 
 #card:hover {
-  transform: rotateX(10deg) translateY(70px);
+  transform: rotateX(20deg) translateY(100px);
 }
-
 .card-clicked {
-  transform: rotateX(20deg) translateY(70px);
+  transform: rotateX(20deg) translateY(100px);
 }
 
 #prediction {
@@ -64,49 +64,95 @@ canvas {
   text-align: center;
 }
 
-
-.sparkle {
+/* overlay electrónico encima de la carta */
+.magic-glow {
   position: absolute;
-  width: 6px;
-  height: 6px;
-  background: white;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 2;
+  background:
+    radial-gradient(circle at top left, rgba(0,255,255,0.05), transparent 30%),
+    radial-gradient(circle at bottom right, rgba(255,255,255,0.05), transparent 30%);
+}
+
+/* pequeñas líneas “tech” */
+.electro-star {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #7ef9ff;
   border-radius: 50%;
-  box-shadow: 0 0 8px cyan;
-  animation: sparkle-float 5s linear forwards;
+  box-shadow: 0 0 6px #00ffff, 0 0 12px #00ffff;
+  animation: float-star 3s linear infinite;
+  pointer-events: none;
   opacity: 0.8;
 }
 
-@keyframes sparkle-float {
+@keyframes float-star {
   0% {
     transform: translateY(0) scale(1);
     opacity: 0.8;
   }
   100% {
-    transform: translateY(-50px) scale(0.5);
+    transform: translateY(40px) scale(0.6); /* AHORA SE MUEVE HACIA ABAJO */
     opacity: 0;
   }
 }
+
+/* ESTRELLAS */
+.tech-dot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: cyan;
+  border-radius: 50%;
+  box-shadow: 0 0 6px cyan;
+  animation: dot-fall 3s ease-in infinite;
+}
+
+@keyframes float-random {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: var(--translate) scale(0.6);
+    opacity: 0;
+  }
+}
+
   </style>
 </head>
 <body>
-<audio id="flip-sound" src="flip-1.MP3" preload="auto"></audio>
+  <audio id="flip-sound" src="flip-1.MP3" preload="auto"></audio>
+  <canvas id="stars"></canvas>
 
-<canvas id="stars"></canvas>
+  <div id="card">
+    <div id="prediction"></div>
+      <div class="stars-container"></div>
+    <!-- Overlay electrónico -->
+    <div class="magic-glow"></div>
+  </div>
 
-<div id="card">
-  <div id="prediction"></div>
- 
-</div>
+  <script>
 
-<script>
-const card = document.getElementById('card');
-const predictionText = document.getElementById('prediction');
-const reversoImg = "reverso.png";
-const prediccionImg = "prediccion.png";
-const flipSound = document.getElementById("flip-sound");
 
+
+
+  // Tu lógica de predicción y estrellas original...
+  const card = document.getElementById('card');
+  const predictionText = document.getElementById('prediction');
+  const reversoImg = "reverso.png";
+  const prediccionImg = "prediccion.png";
+  const flipSound = document.getElementById("flip-sound");
+
+  
 const predicciones = [
- "Proceso iniciado: variable sorpresa detectada en tu línea temporal.",
+  "Proceso iniciado: variable sorpresa detectada en tu línea temporal.",
   "Alerta: tu intuición ha sido activada. Ejecuta confianza inmediata.",
   "Ping entrante: antiguo nodo de conexión social intenta restablecer enlace.",
   "Análisis interno sugerido: la solución está en tu núcleo de datos.",
@@ -134,104 +180,113 @@ const predicciones = [
   "El código de tu destino está reescribiéndose en tiempo real."
 ];
 
-let mostrandoPrediccion = false;
-card.style.backgroundImage = `url('${reversoImg}')`;
 
-function toggleCard() {
-  if (mostrandoPrediccion) {
-    card.style.backgroundImage = `url('${reversoImg}')`;
-    predictionText.style.display = "none";
-    mostrandoPrediccion = false;
-  } else {
-    const randomIndex = Math.floor(Math.random() * predicciones.length);
-    predictionText.innerText = predicciones[randomIndex];
-    card.style.backgroundImage = `url('${prediccionImg}')`;
-    predictionText.style.display = "block";
-    mostrandoPrediccion = true;
+
+  let mostrandoPrediccion = false;
+  card.style.backgroundImage = `url('${reversoImg}')`;
+
+  function toggleCard() {
+    if (mostrandoPrediccion) {
+      card.style.backgroundImage = `url('${reversoImg}')`;
+      predictionText.style.display = "none";
+      mostrandoPrediccion = false;
+    } else {
+      const i = Math.floor(Math.random() * predicciones.length);
+      predictionText.innerText = predicciones[i];
+      card.style.backgroundImage = `url('${prediccionImg}')`;
+      predictionText.style.display = "block";
+      mostrandoPrediccion = true;
+    }
+    card.classList.add("card-clicked");
+    flipSound.currentTime = 0;
+    flipSound.play();
+    setTimeout(() => card.classList.remove("card-clicked"), 300);
   }
 
-  card.classList.add("card-clicked");
-  flipSound.currentTime = 0;
-  flipSound.play();
+  card.addEventListener("click", toggleCard);
+  card.addEventListener("touchstart", e => { e.preventDefault(); toggleCard(); }, { passive: false });
 
-  // Quitar la clase después de la animación
-  setTimeout(() => {
-    card.classList.remove("card-clicked");
-  }, 300);
-}
-
-// CLICK PARA ESCRITORIO
-card.addEventListener("click", toggleCard);
-
-// TOQUE PARA MÓVIL
-card.addEventListener("touchstart", e => {
-  e.preventDefault(); // Evita que se dispare también el click
-  toggleCard();
-}, { passive: false });
-
-card.addEventListener("touchend", () => {
-  // Quitar cualquier animación persistente luego de tocar
-  setTimeout(() => {
-    card.classList.remove("card-clicked");
-  }, 400); // coincide con la duración de la transición
-});
-
-// Estrellas
-const canvas = document.getElementById('stars');
-const ctx = canvas.getContext('2d');
-let stars = [];
-
-function initStars() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  stars = [];
-  for (let i = 0; i < 100; i++) {
-    stars.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      r: Math.random() * 1.5 + 0.3,
-      dx: (Math.random() - 0.5) * 0.2,
-      dy: (Math.random() - 0.5) * 0.2
+  // Estrellas de fondo
+  const canvas = document.getElementById('stars');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+  function initStars() {
+    canvas.width = innerWidth; canvas.height = innerHeight; stars = [];
+    for (let i=0;i<100;i++) stars.push({
+      x: Math.random()*canvas.width,
+      y: Math.random()*canvas.height,
+      r: Math.random()*1.5+0.3,
+      dx: (Math.random()-0.5)*0.2,
+      dy: (Math.random()-0.5)*0.2
     });
   }
-}
-
-function animateStars() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = 'white';
-  for (let star of stars) {
-    ctx.beginPath();
-    ctx.arc(star.x, star.y, star.r, 0, 2 * Math.PI);
-    ctx.fill();
-    star.x += star.dx;
-    star.y += star.dy;
-
-    if (star.x < 0 || star.x > canvas.width) star.dx *= -1;
-    if (star.y < 0 || star.y > canvas.height) star.dy *= -1;
+  function animateStars() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle='white';
+    for (let s of stars) {
+      ctx.beginPath();
+      ctx.arc(s.x,s.y,s.r,0,2*Math.PI);
+      ctx.fill();
+      s.x+=s.dx; s.y+=s.dy;
+      if (s.x<0||s.x>canvas.width) s.dx*=-1;
+      if (s.y<0||s.y>canvas.height) s.dy*=-1;
+    }
+    requestAnimationFrame(animateStars);
   }
-  requestAnimationFrame(animateStars);
+  window.addEventListener('resize', initStars);
+  initStars(); animateStars();
+
+  // Efectos electrónicos sobre la carta
+  const glow = document.querySelector('.magic-glow');
+  function spawnLine() {
+    const line = document.createElement('div');
+    line.className = 'tech-line';
+    line.style.left = Math.random()*100 + '%';
+    line.style.top = Math.random()*100 + '%';
+    line.style.height = 10 + Math.random()*30 + 'px';
+    glow.appendChild(line);
+    setTimeout(()=>line.remove(), 2000);
+  }
+  function spawnDot() {
+    const dot = document.createElement('div');
+    dot.className = 'tech-dot';
+    dot.style.left = Math.random()*100 + '%';
+    dot.style.top = Math.random()*100 + '%';
+    glow.appendChild(dot);
+    setTimeout(()=>dot.remove(), 3000);
+  }
+  setInterval(spawnLine, 150);
+  setInterval(spawnDot, 400);
+
+
+
+const starsContainer = document.querySelector(".stars-container");
+
+function createElectroStar() {
+  const star = document.createElement("div");
+  star.classList.add("electro-star");
+  
+  const cardRect = card.getBoundingClientRect();
+  const sizeOffsetX = Math.random() * card.offsetWidth;
+  const sizeOffsetY = Math.random() * card.offsetHeight;
+
+  star.style.left = `${sizeOffsetX}px`;
+  star.style.top = `${sizeOffsetY}px`;
+  star.style.animationDuration = `${2 + Math.random() * 3}s`;
+
+  starsContainer.appendChild(star);
+
+  setTimeout(() => star.remove(), 4000);
 }
 
-window.addEventListener('resize', initStars);
+// Generar varias estrellas por segundo
+setInterval(createElectroStar, 200);
 
-initStars();
-animateStars();
 
-// Magia flotante
-const glowContainer = document.querySelector('.magic-glow');
 
-function createSparkle() {
-  const sparkle = document.createElement('div');
-  sparkle.classList.add('sparkle');
-  sparkle.style.left = `${Math.random() * 100}%`;
-  sparkle.style.top = `${Math.random() * 100}%`;
-  sparkle.style.animationDuration = `${Math.random() * 3 + 2}s`;
-  glowContainer.appendChild(sparkle);
-  setTimeout(() => sparkle.remove(), 5000);
-}
 
-setInterval(createSparkle, 300);
-</script>
 
+  </script>
 </body>
 </html>
+
