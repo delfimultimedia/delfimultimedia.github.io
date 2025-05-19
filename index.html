@@ -27,10 +27,6 @@ canvas#stars {
   z-index: 0;
 }
 
-
-
-
-
 #card {
   width: 600px;
   height: 740px;
@@ -131,41 +127,24 @@ canvas#stars {
 }
 
   </style>
-
-
-
-
-
-
-
-
-
-
-
 </head>
 <body>
-    
   <audio id="flip-sound" src="flip-1.MP3" preload="auto"></audio>
   <canvas id="stars"></canvas>
 
   <div id="card">
-    </div> <!-- fin de #card -->
-
-
     <div id="prediction"></div>
       <div class="stars-container"></div>
     <!-- Overlay electrónico -->
     <div class="magic-glow"></div>
   </div>
 
-
-
-
-
-
   <script>
 
 
+
+
+  // Tu lógica de predicción y estrellas original...
   const card = document.getElementById('card');
   const predictionText = document.getElementById('prediction');
   const reversoImg = "reverso.png";
@@ -311,4 +290,3 @@ setInterval(createElectroStar, 200);
   </script>
 </body>
 </html>
-
