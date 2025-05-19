@@ -27,6 +27,10 @@ canvas#stars {
   z-index: 0;
 }
 
+
+
+
+
 #card {
   width: 600px;
   height: 740px;
@@ -56,8 +60,8 @@ canvas#stars {
   width: 480px;
   transform: translate(-50%, -50%);
   color: white;
-  font-size: 34px;
-  padding: 10px;
+  font-size: 30px;
+  padding: 12px;
   text-shadow: 1px 1px 20px rgba(130, 230, 255, 0.7);
   border-radius: 10px;
   display: none;
@@ -67,6 +71,7 @@ canvas#stars {
 /* overlay electrónico encima de la carta */
 .magic-glow {
   position: absolute;
+  border-radius: 15px;
   top: 0;
   left: 0;
   width: 100%;
@@ -126,24 +131,41 @@ canvas#stars {
 }
 
   </style>
+
+
+
+
+
+
+
+
+
+
+
 </head>
 <body>
+    
   <audio id="flip-sound" src="flip-1.MP3" preload="auto"></audio>
   <canvas id="stars"></canvas>
 
   <div id="card">
+    </div> <!-- fin de #card -->
+
+
     <div id="prediction"></div>
       <div class="stars-container"></div>
     <!-- Overlay electrónico -->
     <div class="magic-glow"></div>
   </div>
 
+
+
+
+
+
   <script>
 
 
-
-
-  // Tu lógica de predicción y estrellas original...
   const card = document.getElementById('card');
   const predictionText = document.getElementById('prediction');
   const reversoImg = "reverso.png";
